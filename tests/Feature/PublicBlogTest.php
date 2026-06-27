@@ -99,6 +99,17 @@ class PublicBlogTest extends TestCase
             ->assertDontSee('Deleted Public Post');
     }
 
+    public function test_public_blog_uses_a_stable_system_font_surface(): void
+    {
+        $this->createPost('Stable Font Post', 'stable-font-post');
+
+        $this->get(route('blog.index', ['locale' => 'en']))
+            ->assertOk()
+            ->assertSee('blog-public-surface', false)
+            ->assertDontSee('@font-face', false)
+            ->assertDontSee('rel="preload" as="font"', false);
+    }
+
     public function test_locale_slug_resolution_requires_an_active_locale_and_matching_translation(): void
     {
         $this->createPost('Localized Post', 'localized-post');

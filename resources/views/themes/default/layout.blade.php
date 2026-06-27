@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', $currentLocale->code ?? app()->getLocale()) }}" dir="{{ $currentLocale->direction ?? 'ltr' }}">
     <head>
-        @include('partials.head', ['seo' => $seo ?? null])
+        @include('partials.head', ['seo' => $seo ?? null, 'useWebFonts' => false])
     </head>
     <body
-        class="min-h-screen bg-slate-50 text-slate-950 antialiased"
+        class="blog-public-surface min-h-screen bg-slate-50 text-slate-950 antialiased"
         @if (filled($theme?->cssVariables ?? null)) style="{{ $theme->cssVariables }}" @endif
     >
         <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-950 focus:shadow">

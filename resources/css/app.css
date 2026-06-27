@@ -60,6 +60,10 @@
         color-scheme: dark;
     }
 
+    .blog-public-surface {
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
     @supports not (scrollbar-gutter: stable) {
         html {
             overflow-y: scroll;

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -16,6 +17,12 @@ class Theme extends Model
             'is_default' => 'boolean',
             'is_active' => 'boolean',
         ];
+    }
+
+    /** @param  Builder<Theme>  $query */
+    public function scopeActiveDefault(Builder $query): void
+    {
+        $query->where('is_active', true)->where('is_default', true);
     }
 
     /** @return HasMany<ThemePalette, $this> */

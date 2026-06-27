@@ -22,8 +22,8 @@ class SeoManager
 
     public function blogIndex(Locale $locale, int $page = 1): SeoData
     {
-        $title = 'Blog';
-        $description = 'Editorial notes, technical articles, and product updates from '.config('app.name', 'BlogKit').'.';
+        $title = trans('blog.seo.index.title', [], $locale->code);
+        $description = trans('blog.seo.index.description', ['app' => config('app.name', 'BlogKit')], $locale->code);
 
         return new SeoData(
             title: $this->title($title),
@@ -79,9 +79,11 @@ class SeoManager
 
     public function taxonomy(Category|Tag $taxonomy, Locale $locale, string $type, int $page = 1, int $postCount = 0): SeoData
     {
-        $label = $type === 'category' ? 'Category' : 'Tag';
+        $label = $type === 'category'
+            ? trans('blog.seo.taxonomy.category', [], $locale->code)
+            : trans('blog.seo.taxonomy.tag', [], $locale->code);
         $title = $taxonomy->name.' '.$label;
-        $description = $this->excerpt($taxonomy->description ?: 'Published articles filed under '.$taxonomy->name.'.');
+        $description = $this->excerpt($taxonomy->description ?: trans('blog.seo.taxonomy.description', ['name' => $taxonomy->name], $locale->code));
         $route = $type === 'category' ? 'blog.categories.show' : 'blog.tags.show';
         $robots = ($type === 'category' && $postCount < 1)
             || ($type === 'tag' && ($postCount < 2 || blank($taxonomy->description)))

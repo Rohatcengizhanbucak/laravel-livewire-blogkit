@@ -12,6 +12,7 @@ use App\Models\Theme;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -23,7 +24,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $locale = Locale::query()->firstOrCreate(
+        $enLocale = Locale::query()->updateOrCreate(
             ['code' => 'en'],
             [
                 'name' => 'English',
@@ -33,11 +34,11 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        Locale::query()->firstOrCreate(
+        $trLocale = Locale::query()->updateOrCreate(
             ['code' => 'tr'],
             [
                 'name' => 'Turkish',
-                'native_name' => 'Turkce',
+                'native_name' => 'Türkçe',
                 'is_active' => true,
                 'sort_order' => 10,
             ],
@@ -68,10 +69,13 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        $author = User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $author = User::query()->updateOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('password'),
+            ],
+        );
 
         $category = Category::query()->firstOrCreate(
             ['slug' => 'engineering'],
@@ -87,11 +91,14 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Laravel'],
         );
 
-        $post = Post::query()->firstOrCreate(
-            ['author_id' => $author->id, 'category_id' => $category->id, 'status' => 'published'],
+        $post = Post::query()->updateOrCreate(
+            ['category_id' => $category->id, 'is_featured' => true],
             [
+                'author_id' => $author->id,
+                'status' => 'published',
                 'reading_time' => 4,
                 'is_featured' => true,
+                'allow_index' => true,
                 'published_at' => now(),
             ],
         );
@@ -99,7 +106,7 @@ class DatabaseSeeder extends Seeder
         $post->tags()->syncWithoutDetaching([$tag->id]);
 
         PostTranslation::query()->firstOrCreate(
-            ['post_id' => $post->id, 'locale_id' => $locale->id],
+            ['post_id' => $post->id, 'locale_id' => $enLocale->id],
             [
                 'title' => 'Designing a Modern Laravel Blog Foundation',
                 'slug' => Str::slug('Designing a Modern Laravel Blog Foundation'),
@@ -108,8 +115,18 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
+        PostTranslation::query()->firstOrCreate(
+            ['post_id' => $post->id, 'locale_id' => $trLocale->id],
+            [
+                'title' => 'Modern Laravel Blog Temeli Tasarlamak',
+                'slug' => Str::slug('Modern Laravel Blog Temeli Tasarlamak'),
+                'excerpt' => 'İçerik, SEO, tema ve dil mimarisine ilk bakış.',
+                'content' => 'Bu başlangıç yazısı, açık kaynak blog platformunun yönünü anlatır.',
+            ],
+        );
+
         SeoMeta::query()->firstOrCreate(
-            ['seoable_type' => Post::class, 'seoable_id' => $post->id, 'locale_id' => $locale->id],
+            ['seoable_type' => Post::class, 'seoable_id' => $post->id, 'locale_id' => $enLocale->id],
             [
                 'meta_title' => 'Modern Laravel Blog Foundation',
                 'meta_description' => 'Open-source Laravel and Livewire blog platform foundation with multilingual content, themes, and SEO metadata.',
@@ -117,6 +134,19 @@ class DatabaseSeeder extends Seeder
                 'schema' => [
                     '@type' => 'Article',
                     'headline' => 'Designing a Modern Laravel Blog Foundation',
+                ],
+            ],
+        );
+
+        SeoMeta::query()->firstOrCreate(
+            ['seoable_type' => Post::class, 'seoable_id' => $post->id, 'locale_id' => $trLocale->id],
+            [
+                'meta_title' => 'Modern Laravel Blog Temeli',
+                'meta_description' => 'Çok dilli içerik, tema ve SEO metadatası içeren açık kaynak Laravel ve Livewire blog platformu temeli.',
+                'schema_type' => 'Article',
+                'schema' => [
+                    '@type' => 'Article',
+                    'headline' => 'Modern Laravel Blog Temeli Tasarlamak',
                 ],
             ],
         );

@@ -8,26 +8,26 @@
         @if (filled($theme?->cssVariables ?? null)) style="{{ $theme->cssVariables }}" @endif
     >
         <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-950 focus:shadow">
-            Skip to content
+            {{ trans('blog.nav.skip_to_content', [], $currentLocale->code) }}
         </a>
 
         <header class="border-b border-slate-200 bg-white/95">
-            <nav class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-4" aria-label="Primary navigation">
+            <nav class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-4" aria-label="{{ trans('blog.aria.primary_navigation', [], $currentLocale->code) }}">
                 <a href="{{ route('blog.index', ['locale' => $currentLocale->code]) }}" class="text-base font-bold text-slate-950">
                     {{ config('app.name', 'BlogKit') }}
                 </a>
 
                 <div class="flex items-center gap-4 text-sm">
                     <a href="{{ route('blog.index', ['locale' => $currentLocale->code]) }}" class="font-medium text-slate-700 hover:text-slate-950">
-                        Blog
+                        {{ trans('blog.nav.blog', [], $currentLocale->code) }}
                     </a>
                     @auth
                         <a href="{{ route('dashboard') }}" class="font-medium text-slate-700 hover:text-slate-950">
-                            Dashboard
+                            {{ trans('blog.nav.dashboard', [], $currentLocale->code) }}
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="font-medium text-slate-700 hover:text-slate-950">
-                            Log in
+                            {{ trans('blog.nav.login', [], $currentLocale->code) }}
                         </a>
                     @endauth
                 </div>
@@ -54,8 +54,8 @@
 
         <footer class="border-t border-slate-200 bg-white">
             <div class="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
-                <p>&copy; {{ now()->year }} {{ config('app.name', 'BlogKit') }}. Open-source Laravel publishing foundation.</p>
-                <a href="{{ route('sitemap') }}" class="font-medium text-slate-700 hover:text-slate-950">Sitemap</a>
+                <p>&copy; {{ now()->year }} {{ config('app.name', 'BlogKit') }}. {{ trans('blog.footer.tagline', [], $currentLocale->code) }}</p>
+                <a href="{{ route('sitemap') }}" class="font-medium text-slate-700 hover:text-slate-950">{{ trans('blog.nav.sitemap', [], $currentLocale->code) }}</a>
             </div>
         </footer>
 

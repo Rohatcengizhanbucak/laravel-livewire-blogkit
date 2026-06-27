@@ -110,6 +110,22 @@ class PublicBlogTest extends TestCase
             ->assertDontSee('rel="preload" as="font"', false);
     }
 
+    public function test_blog_index_translates_public_ui_for_the_current_locale(): void
+    {
+        $this->createPost('Turkce Yayin', 'turkce-yayin', locale: $this->tr);
+
+        $this->get(route('blog.index', ['locale' => 'tr']))
+            ->assertOk()
+            ->assertSee('Açık Blog')
+            ->assertSee('SEO odaklı Laravel yayıncılığı')
+            ->assertSee('BlogKit için editör notları, teknik yazılar ve ürün güncellemeleri.')
+            ->assertSee('Turkce Yayin')
+            ->assertSee('3 dk okuma')
+            ->assertDontSee('SEO-aware Laravel publishing')
+            ->assertDontSee('Editorial notes, technical articles')
+            ->assertDontSee('No published posts are available');
+    }
+
     public function test_locale_slug_resolution_requires_an_active_locale_and_matching_translation(): void
     {
         $this->createPost('Localized Post', 'localized-post');

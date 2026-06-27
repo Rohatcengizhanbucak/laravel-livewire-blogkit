@@ -11,9 +11,9 @@
                 </a>
             @endif
             @if ($post->published_at)
-                <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->toFormattedDateString() }}</time>
+                <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->locale($currentLocale->code)->isoFormat(trans('blog.date_format', [], $currentLocale->code)) }}</time>
             @endif
-            <span>{{ $post->reading_time }} min read</span>
+            <span>{{ trans_choice('blog.reading_time', $post->reading_time, ['minutes' => $post->reading_time], $currentLocale->code) }}</span>
         </div>
 
         <h2 class="text-2xl font-bold tracking-normal text-slate-950">
@@ -27,7 +27,7 @@
         @endif
 
         @if ($post->tags->isNotEmpty())
-            <nav class="mt-5 flex flex-wrap gap-2" aria-label="Post tags">
+            <nav class="mt-5 flex flex-wrap gap-2" aria-label="{{ trans('blog.aria.post_tags', [], $currentLocale->code) }}">
                 @foreach ($post->tags as $tag)
                     <a href="{{ route('blog.tags.show', ['locale' => $currentLocale->code, 'slug' => $tag->slug]) }}" class="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-700">
                         #{{ $tag->name }}

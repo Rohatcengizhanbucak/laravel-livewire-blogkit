@@ -104,11 +104,29 @@ class PublicBlogTest extends TestCase
     {
         $this->createPost('Stable Font Post', 'stable-font-post');
 
-        $this->get(route('blog.index', ['locale' => 'en']))
+        $response = $this->get(route('blog.index', ['locale' => 'en']));
+
+        $response
             ->assertOk()
             ->assertSee('blog-public-surface', false)
+            ->assertSee('sticky top-0 z-40', false)
+            ->assertSee('backdrop-blur-xl', false)
+            ->assertSee('<details class="group relative order-4 flex flex-none items-center md:order-none">', false)
+            ->assertSee('group-open:bg-white', false)
+            ->assertSee('group-open:rotate-180', false)
+            ->assertSee('shadow-lg shadow-neutral-950/10', false)
+            ->assertSee('aria-current="page"', false)
+            ->assertSee('blog-public-surface flex min-h-screen flex-col bg-white', false)
+            ->assertSee('<main id="content" class="flex-1">', false)
+            ->assertDontSee('<select', false)
+            ->assertDontSee('onchange="if (this.value) window.location.href = this.value"', false)
+            ->assertDontSee('rounded-full px-2.5 py-1 transition', false)
+            ->assertDontSee('blog-public-surface min-h-screen bg-neutral-50', false)
             ->assertDontSee('@font-face', false)
             ->assertDontSee('rel="preload" as="font"', false);
+
+        $response->assertSeeInOrder(['role="search"', 'aria-label="Language switcher"', 'ml-auto flex flex-wrap'], false);
+        $this->assertSame(1, substr_count($response->getContent(), 'aria-label="Language switcher"'));
     }
 
     public function test_public_navbar_search_form_targets_the_current_locale(): void
@@ -191,6 +209,16 @@ class PublicBlogTest extends TestCase
             ->assertDontSee('Needle Turkish Article')
             ->assertDontSee('Needle Deleted Article')
             ->assertDontSee('Other Public Article');
+    }
+
+    public function test_search_page_uses_the_standard_public_vertical_spacing(): void
+    {
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'stories']))
+            ->assertOk()
+            ->assertSee('class="mx-auto max-w-4xl px-5 py-14"', false)
+            ->assertSee('class="mx-auto max-w-4xl px-5 pb-14"', false)
+            ->assertDontSee('md:py-16', false)
+            ->assertDontSee('pb-16', false);
     }
 
     public function test_search_members_lists_only_authors_with_public_current_locale_posts(): void

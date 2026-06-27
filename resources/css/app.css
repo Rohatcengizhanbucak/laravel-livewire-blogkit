@@ -61,7 +61,12 @@
     }
 
     .blog-public-surface {
+        background-color: #fff;
         font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    .blog-public-surface main {
+        background-color: #fff;
     }
 
     @supports not (scrollbar-gutter: stable) {

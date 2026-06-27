@@ -1,5 +1,5 @@
 <div class="bg-white">
-    <section class="mx-auto max-w-4xl px-5 py-14 md:py-16">
+    <section class="mx-auto max-w-4xl px-5 py-14">
         <h1 class="text-4xl font-bold tracking-normal text-neutral-500 md:text-5xl">
             @if (filled($query))
                 {{ trans('blog.search.results_for', [], $currentLocale->code) }}
@@ -27,7 +27,7 @@
         </nav>
     </section>
 
-    <section class="mx-auto max-w-4xl px-5 pb-16">
+    <section class="mx-auto max-w-4xl px-5 pb-14">
         @if (! $isSearchable)
             <div class="border-b border-neutral-200 py-8 text-neutral-600">
                 {{ trans('blog.search.short_query', [], $currentLocale->code) }}

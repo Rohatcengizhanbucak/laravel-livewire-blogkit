@@ -5,6 +5,7 @@ namespace App\Livewire\Public;
 use App\Models\Post;
 use App\Models\PostTranslation;
 use App\Support\Localization\LocaleResolver;
+use App\Support\Localization\LocaleUrlFactory;
 use App\Support\Seo\SeoManager;
 use App\Support\Theming\ThemedPageViewFactory;
 use App\Support\Theming\ThemeManager;
@@ -23,9 +24,10 @@ class PostShow extends Component
         $this->slug = $slug;
     }
 
-    public function render(LocaleResolver $locales, SeoManager $seo, ThemeManager $themes, ThemedPageViewFactory $views): View
+    public function render(LocaleResolver $locales, SeoManager $seo, ThemeManager $themes, ThemedPageViewFactory $views, LocaleUrlFactory $localeUrls): View
     {
         $locale = $locales->resolve($this->locale);
+        $activeLocales = $locales->active();
         $post = $this->post($locale->id, $this->slug);
         $translation = $post->translations->firstWhere('locale_id', $locale->id);
 
@@ -57,7 +59,8 @@ class PostShow extends Component
             ],
             layoutData: [
                 'currentLocale' => $locale,
-                'locales' => $locales->active(),
+                'localeUrls' => $localeUrls->post($post),
+                'locales' => $activeLocales,
                 'seo' => $seoData,
                 'theme' => $theme,
             ],

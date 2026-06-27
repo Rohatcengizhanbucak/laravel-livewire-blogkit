@@ -126,6 +126,35 @@ class PublicBlogTest extends TestCase
             ->assertDontSee('No published posts are available');
     }
 
+    public function test_post_language_switcher_points_to_the_translated_post_slug(): void
+    {
+        $post = $this->createPost('English Detail Post', 'english-detail-post');
+
+        PostTranslation::query()->create([
+            'post_id' => $post->id,
+            'locale_id' => $this->tr->id,
+            'title' => 'Turkish Detail Post',
+            'slug' => 'turkish-detail-post',
+            'excerpt' => 'Turkish detail excerpt.',
+            'content' => 'Turkish detail content.',
+        ]);
+
+        $this->get(route('blog.show', ['locale' => 'tr', 'slug' => 'turkish-detail-post']))
+            ->assertOk()
+            ->assertSee('href="'.route('blog.show', ['locale' => 'en', 'slug' => 'english-detail-post']).'"', false)
+            ->assertDontSee('href="'.route('blog.index', ['locale' => 'en']).'"', false);
+    }
+
+    public function test_post_language_switcher_disables_missing_translations(): void
+    {
+        $this->createPost('Turkish Only Detail', 'turkish-only-detail', locale: $this->tr);
+
+        $this->get(route('blog.show', ['locale' => 'tr', 'slug' => 'turkish-only-detail']))
+            ->assertOk()
+            ->assertSee('aria-disabled="true"', false)
+            ->assertDontSee('href="'.route('blog.index', ['locale' => 'en']).'"', false);
+    }
+
     public function test_locale_slug_resolution_requires_an_active_locale_and_matching_translation(): void
     {
         $this->createPost('Localized Post', 'localized-post');

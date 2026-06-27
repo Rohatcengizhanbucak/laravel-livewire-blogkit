@@ -24,6 +24,7 @@ return [
         'login' => 'Giriş',
         'sitemap' => 'Site Haritası',
         'skip_to_content' => 'İçeriğe geç',
+        'translation_unavailable' => 'Çeviri yok',
     ],
     'reading_time' => '{1} :minutes dk okuma|[2,*] :minutes dk okuma',
     'related_posts' => 'İlgili yazılar',

@@ -36,13 +36,29 @@
             @if (($locales ?? collect())->count() > 1)
                 <div class="mx-auto flex max-w-6xl gap-3 px-5 pb-4 text-xs uppercase tracking-wide text-slate-500">
                     @foreach ($locales as $availableLocale)
-                        <a
-                            href="{{ route('blog.index', ['locale' => $availableLocale->code]) }}"
-                            hreflang="{{ $availableLocale->code }}"
-                            class="{{ $availableLocale->code === $currentLocale->code ? 'font-bold text-slate-950' : 'hover:text-slate-800' }}"
-                        >
-                            {{ $availableLocale->code }}
-                        </a>
+                        @php
+                            $availableLocaleUrl = ($localeUrls ?? [])[$availableLocale->code] ?? null;
+                            $isCurrentLocale = $availableLocale->code === $currentLocale->code;
+                        @endphp
+
+                        @if ($availableLocaleUrl)
+                            <a
+                                href="{{ $availableLocaleUrl }}"
+                                hreflang="{{ $availableLocale->code }}"
+                                @if ($isCurrentLocale) aria-current="page" @endif
+                                class="{{ $isCurrentLocale ? 'font-bold text-slate-950' : 'hover:text-slate-800' }}"
+                            >
+                                {{ $availableLocale->code }}
+                            </a>
+                        @else
+                            <span
+                                aria-disabled="true"
+                                title="{{ trans('blog.nav.translation_unavailable', [], $currentLocale->code) }}"
+                                class="cursor-not-allowed text-slate-300"
+                            >
+                                {{ $availableLocale->code }}
+                            </span>
+                        @endif
                     @endforeach
                 </div>
             @endif

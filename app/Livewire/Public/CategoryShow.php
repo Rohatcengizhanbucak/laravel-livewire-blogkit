@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Locale;
 use App\Models\Post;
 use App\Support\Localization\LocaleResolver;
+use App\Support\Localization\LocaleUrlFactory;
 use App\Support\Seo\SeoManager;
 use App\Support\Theming\ThemedPageViewFactory;
 use App\Support\Theming\ThemeManager;
@@ -25,9 +26,10 @@ class CategoryShow extends Component
         $this->slug = $slug;
     }
 
-    public function render(LocaleResolver $locales, SeoManager $seo, ThemeManager $themes, ThemedPageViewFactory $views): View
+    public function render(LocaleResolver $locales, SeoManager $seo, ThemeManager $themes, ThemedPageViewFactory $views, LocaleUrlFactory $localeUrls): View
     {
         $locale = $locales->resolve($this->locale);
+        $activeLocales = $locales->active();
         $category = Category::query()->active()->where('slug', $this->slug)->firstOrFail();
         $page = max(1, (int) request()->query('page', 1));
         $posts = $this->posts($category, $locale, $page);
@@ -50,7 +52,8 @@ class CategoryShow extends Component
             ],
             layoutData: [
                 'currentLocale' => $locale,
-                'locales' => $locales->active(),
+                'localeUrls' => $localeUrls->category($category, $activeLocales),
+                'locales' => $activeLocales,
                 'seo' => $seoData,
                 'theme' => $theme,
             ],

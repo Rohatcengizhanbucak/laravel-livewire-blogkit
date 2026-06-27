@@ -24,6 +24,7 @@ return [
         'login' => 'Log in',
         'sitemap' => 'Sitemap',
         'skip_to_content' => 'Skip to content',
+        'translation_unavailable' => 'Translation unavailable',
     ],
     'reading_time' => '{1} :minutes min read|[2,*] :minutes min read',
     'related_posts' => 'Related posts',

@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\PostTranslation;
 use App\Models\Tag;
 use App\Models\Theme;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -117,6 +118,8 @@ class PublicBlogTest extends TestCase
             ->assertSee('role="search"', false)
             ->assertSee('action="'.route('blog.search', ['locale' => 'tr']).'"', false)
             ->assertSee('name="q"', false)
+            ->assertSee('name="type"', false)
+            ->assertSee('value="stories"', false)
             ->assertSee(trans('blog.nav.search_placeholder', [], 'tr'));
     }
 
@@ -176,10 +179,12 @@ class PublicBlogTest extends TestCase
         $deleted = $this->createPost('Needle Deleted Article', 'needle-deleted-article');
         $deleted->delete();
 
-        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle']))
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'stories']))
             ->assertOk()
             ->assertSee('Results for')
             ->assertSee('Stories')
+            ->assertSee('Members')
+            ->assertSee('Tags')
             ->assertSee('Needle Public Article')
             ->assertDontSee('Needle Draft Secret')
             ->assertDontSee('Needle Future Article')
@@ -188,42 +193,145 @@ class PublicBlogTest extends TestCase
             ->assertDontSee('Other Public Article');
     }
 
+    public function test_search_members_lists_only_authors_with_public_current_locale_posts(): void
+    {
+        $publicAuthor = User::factory()->create([
+            'name' => 'Needle Writer',
+            'email' => 'needle-public@example.com',
+        ]);
+        $draftAuthor = User::factory()->create([
+            'name' => 'Needle Draft Writer',
+            'email' => 'needle-draft@example.com',
+        ]);
+        $privateAuthor = User::factory()->create([
+            'name' => 'Needle Private Member',
+            'email' => 'needle-private@example.com',
+        ]);
+        $turkishAuthor = User::factory()->create([
+            'name' => 'Needle Turkish Writer',
+            'email' => 'needle-tr@example.com',
+        ]);
+
+        $this->createPost('Needle Public By Author', 'needle-public-by-author', postAttributes: ['author_id' => $publicAuthor->id]);
+        $this->createPost('Needle Draft By Author', 'needle-draft-by-author', postAttributes: [
+            'author_id' => $draftAuthor->id,
+            'status' => 'draft',
+        ]);
+        $this->createPost('Needle Turkish By Author', 'needle-turkish-by-author', locale: $this->tr, postAttributes: ['author_id' => $turkishAuthor->id]);
+
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'members']))
+            ->assertOk()
+            ->assertSee('Members')
+            ->assertSee('Needle Writer')
+            ->assertSee('Needle Public By Author')
+            ->assertDontSee('Needle Draft Writer')
+            ->assertDontSee('Needle Private Member')
+            ->assertDontSee('Needle Turkish Writer')
+            ->assertDontSee($publicAuthor->email)
+            ->assertDontSee($draftAuthor->email)
+            ->assertDontSee($privateAuthor->email)
+            ->assertDontSee($turkishAuthor->email);
+    }
+
+    public function test_search_tags_lists_only_tags_attached_to_public_current_locale_posts(): void
+    {
+        $publicTag = Tag::query()->create([
+            'name' => 'Needle Tools',
+            'slug' => 'needle-tools',
+            'description' => 'Neutral public tag description.',
+        ]);
+        $draftTag = Tag::query()->create([
+            'name' => 'Needle Draft',
+            'slug' => 'needle-draft',
+            'description' => 'Draft-only tag description.',
+        ]);
+        $turkishTag = Tag::query()->create([
+            'name' => 'Needle Turkish',
+            'slug' => 'needle-turkish',
+            'description' => 'Turkish-only tag description.',
+        ]);
+        $orphanTag = Tag::query()->create([
+            'name' => 'Needle Orphan',
+            'slug' => 'needle-orphan',
+            'description' => 'No public post is attached.',
+        ]);
+
+        $this->createPost('Needle Tagged Article', 'needle-tagged-article', tags: [$publicTag]);
+        $this->createPost('Needle Draft Tagged Article', 'needle-draft-tagged-article', postAttributes: ['status' => 'draft'], tags: [$draftTag]);
+        $this->createPost('Needle Turkish Tagged Article', 'needle-turkish-tagged-article', locale: $this->tr, tags: [$turkishTag]);
+
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'tags']))
+            ->assertOk()
+            ->assertSee('Tags')
+            ->assertSee('Needle Tools')
+            ->assertSee('Neutral public tag description.')
+            ->assertDontSee('Needle Draft')
+            ->assertDontSee('Needle Turkish')
+            ->assertDontSee('Needle Orphan')
+            ->assertDontSee($draftTag->description)
+            ->assertDontSee($turkishTag->description)
+            ->assertDontSee($orphanTag->description);
+    }
+
+    public function test_search_tabs_preserve_the_query_value(): void
+    {
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'stories']))
+            ->assertOk()
+            ->assertSee('href="'.e(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'members'])).'"', false)
+            ->assertSee('href="'.e(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'tags'])).'"', false);
+    }
+
+    public function test_invalid_search_type_falls_back_to_stories(): void
+    {
+        $this->createPost('Fallback Needle Story', 'fallback-needle-story');
+
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'unknown']))
+            ->assertOk()
+            ->assertSee('Fallback Needle Story')
+            ->assertSee('href="'.e(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'stories'])).'"', false);
+    }
+
     public function test_public_search_surface_uses_neutral_accents(): void
     {
         $this->createPost('Neutral Public Article', 'neutral-public-article');
 
-        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'neutral']))
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'neutral', 'type' => 'stories']))
             ->assertOk()
             ->assertDontSee('text-blue', false)
             ->assertDontSee('border-blue', false)
             ->assertDontSee('bg-blue', false)
-            ->assertDontSee('#2563eb', false);
+            ->assertDontSee('text-slate', false)
+            ->assertDontSee('border-slate', false)
+            ->assertDontSee('bg-slate', false)
+            ->assertDontSee('#2563eb', false)
+            ->assertDontSee('#475569', false);
     }
 
     public function test_search_short_query_does_not_list_results(): void
     {
         $this->createPost('A Matching Public Article', 'a-matching-public-article');
 
-        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'a']))
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'a', 'type' => 'stories']))
             ->assertOk()
             ->assertSee(trans('blog.search.short_query', [], 'en'))
             ->assertDontSee('A Matching Public Article');
     }
 
-    public function test_search_language_switcher_preserves_the_query(): void
+    public function test_search_language_switcher_preserves_the_query_and_type(): void
     {
-        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle']))
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'members']))
             ->assertOk()
-            ->assertSee('href="'.route('blog.search', ['locale' => 'tr', 'q' => 'needle']).'"', false);
+            ->assertSee('href="'.e(route('blog.search', ['locale' => 'tr', 'q' => 'needle', 'type' => 'members'])).'"', false);
     }
 
-    public function test_search_renders_noindex_seo_head_without_json_ld(): void
+    public function test_search_renders_noindex_canonical_seo_head_without_json_ld(): void
     {
         $this->createPost('Needle Public Article', 'needle-public-article');
 
-        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle']))
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'tags']))
             ->assertOk()
             ->assertSee('<meta name="robots" content="noindex,follow" />', false)
+            ->assertSee('<link rel="canonical" href="'.e(route('blog.search', ['locale' => 'en', 'q' => 'needle', 'type' => 'tags'])).'" />', false)
             ->assertDontSee('<script type="application/ld+json">', false);
     }
 

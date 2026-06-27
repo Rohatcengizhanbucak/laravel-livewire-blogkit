@@ -36,13 +36,26 @@ return [
     'search' => [
         'description' => 'Find public articles by title, summary, or body content in the selected language.',
         'empty' => 'No public articles matched ":query".',
+        'empty_states' => [
+            'members' => 'No public members matched ":query".',
+            'stories' => 'No public stories matched ":query".',
+            'tags' => 'No public tags matched ":query".',
+        ],
         'eyebrow' => 'Search',
         'heading' => 'Search the blog',
         'heading_with_query' => 'Search results for ":query"',
+        'latest_story' => 'Latest story:',
+        'member_public_posts' => '{1} :count public story|[2,*] :count public stories',
         'result_sections' => 'Search result sections',
         'results_for' => 'Results for',
         'short_query' => 'Enter at least 2 characters to search public articles.',
         'stories' => 'Stories',
+        'tag_public_posts' => '{1} :count public story|[2,*] :count public stories',
+        'tabs' => [
+            'members' => 'Members',
+            'stories' => 'Stories',
+            'tags' => 'Tags',
+        ],
     ],
     'seo' => [
         'index' => [

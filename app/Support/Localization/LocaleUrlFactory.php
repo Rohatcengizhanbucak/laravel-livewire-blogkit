@@ -28,10 +28,10 @@ class LocaleUrlFactory
      * @param  iterable<int, Locale>  $locales
      * @return array<string, string>
      */
-    public function search(iterable $locales, string $query = ''): array
+    public function search(iterable $locales, string $query = '', string $type = 'stories'): array
     {
         $urls = [];
-        $params = filled($query) ? ['q' => $query] : [];
+        $params = filled($query) ? ['q' => $query, 'type' => $type] : ['type' => $type];
 
         foreach ($locales as $locale) {
             $urls[$locale->code] = route('blog.search', [

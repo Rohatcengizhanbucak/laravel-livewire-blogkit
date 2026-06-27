@@ -36,13 +36,26 @@ return [
     'search' => [
         'description' => 'Seçili dilde başlık, özet veya içerik metnine göre açık yazıları bulun.',
         'empty' => '":query" ile eşleşen açık yazı bulunamadı.',
+        'empty_states' => [
+            'members' => '":query" ile eşleşen açık yazar bulunamadı.',
+            'stories' => '":query" ile eşleşen açık yazı bulunamadı.',
+            'tags' => '":query" ile eşleşen açık etiket bulunamadı.',
+        ],
         'eyebrow' => 'Arama',
         'heading' => 'Blogda ara',
         'heading_with_query' => '":query" için arama sonuçları',
+        'latest_story' => 'Son yazı:',
+        'member_public_posts' => '{1} :count açık yazı|[2,*] :count açık yazı',
         'result_sections' => 'Arama sonuç bölümleri',
         'results_for' => 'Sonuçlar:',
         'short_query' => 'Açık yazılarda arama yapmak için en az 2 karakter girin.',
         'stories' => 'Yazılar',
+        'tag_public_posts' => '{1} :count açık yazı|[2,*] :count açık yazı',
+        'tabs' => [
+            'members' => 'Yazarlar',
+            'stories' => 'Yazılar',
+            'tags' => 'Etiketler',
+        ],
     ],
     'seo' => [
         'index' => [

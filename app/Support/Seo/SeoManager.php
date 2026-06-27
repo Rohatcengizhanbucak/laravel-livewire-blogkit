@@ -110,15 +110,11 @@ class SeoManager
         );
     }
 
-    public function search(Locale $locale, string $query = ''): SeoData
+    public function search(Locale $locale, string $query = '', string $type = 'stories'): SeoData
     {
         $title = trans('blog.seo.search.title', [], $locale->code);
         $description = trans('blog.seo.search.description', ['app' => config('app.name', 'BlogKit')], $locale->code);
-        $canonical = route('blog.search', ['locale' => $locale->code]);
-
-        if (filled($query)) {
-            $canonical .= '?q='.rawurlencode($query);
-        }
+        $canonical = $this->searchUrl($locale->code, $query, $type);
 
         return new SeoData(
             title: $this->title($title),
@@ -128,8 +124,8 @@ class SeoManager
             ogTitle: $this->title($title),
             ogDescription: $description,
             ogImage: null,
-            alternates: $this->searchAlternates($query),
-            xDefaultUrl: $this->defaultSearchUrl($query),
+            alternates: $this->searchAlternates($query, $type),
+            xDefaultUrl: $this->defaultSearchUrl($query, $type),
             structuredData: null,
         );
     }
@@ -236,23 +232,29 @@ class SeoManager
     }
 
     /** @return array<int, array{locale: string, url: string}> */
-    private function searchAlternates(string $query): array
+    private function searchAlternates(string $query, string $type): array
     {
         return $this->locales->active()
             ->map(fn (Locale $locale): array => [
                 'locale' => $locale->code,
-                'url' => route('blog.search', ['locale' => $locale->code])
-                    .(filled($query) ? '?q='.rawurlencode($query) : ''),
+                'url' => $this->searchUrl($locale->code, $query, $type),
             ])
             ->values()
             ->all();
     }
 
-    private function defaultSearchUrl(string $query): string
+    private function defaultSearchUrl(string $query, string $type): string
     {
-        $url = route('blog.search', ['locale' => $this->locales->default()->code]);
+        return $this->searchUrl($this->locales->default()->code, $query, $type);
+    }
 
-        return filled($query) ? $url.'?q='.rawurlencode($query) : $url;
+    private function searchUrl(string $locale, string $query, string $type): string
+    {
+        return route('blog.search', [
+            'locale' => $locale,
+            'q' => $query,
+            'type' => $type,
+        ]);
     }
 
     /** @return array<int, array{locale: string, url: string}> */

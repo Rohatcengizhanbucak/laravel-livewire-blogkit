@@ -1,5 +1,5 @@
 <div>
-    <section class="bg-white">
+    <section class="min-h-[25.25rem] bg-white">
         <div class="mx-auto max-w-6xl px-5 py-14">
             <p class="text-sm font-semibold uppercase tracking-wide text-blue-700">{{ trans('blog.index.eyebrow', [], $currentLocale->code) }}</p>
             <h1 class="mt-3 max-w-3xl text-4xl font-bold tracking-normal text-slate-950 md:text-5xl">

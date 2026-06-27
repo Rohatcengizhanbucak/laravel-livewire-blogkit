@@ -1,8 +1,8 @@
 <div>
-    <section class="bg-white">
-        <div class="mx-auto max-w-6xl px-5 py-12">
+    <section class="min-h-[25.25rem] bg-white">
+        <div class="mx-auto max-w-6xl px-5 py-14">
             <p class="text-sm font-semibold uppercase tracking-wide text-blue-700">{{ trans('blog.search.eyebrow', [], $currentLocale->code) }}</p>
-            <h1 class="mt-3 text-4xl font-bold tracking-normal text-slate-950 md:text-5xl">
+            <h1 class="mt-3 max-w-3xl text-4xl font-bold tracking-normal text-slate-950 md:text-5xl">
                 {{ filled($query) ? trans('blog.search.heading_with_query', ['query' => $query], $currentLocale->code) : trans('blog.search.heading', [], $currentLocale->code) }}
             </h1>
             <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600">

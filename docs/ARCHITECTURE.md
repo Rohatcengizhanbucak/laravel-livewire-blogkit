@@ -15,7 +15,7 @@ This keeps publication state, author ownership, scheduling, and taxonomy indepen
 
 ### Localization
 
-`locales` stores available languages, default locale state, direction, and sort order. Future public routes should resolve locale early, then query translations through the active locale.
+`locales` stores available languages, default locale state, direction, and sort order. Public routes resolve locale early, reject inactive or unknown locales with 404, call `app()->setLocale()`, and query translations through the active locale.
 
 Expected URL direction:
 
@@ -36,7 +36,18 @@ Expected URL direction:
 - schema type
 - schema JSON payload
 
-Rendering should happen through a dedicated SEO view component or service so templates do not duplicate tag logic.
+Rendering happens through `App\Support\Seo` and `resources/views/components/seo-head.blade.php` so templates do not duplicate tag logic. The public layer centralizes canonical URLs, robots directives, Open Graph output, JSON-LD, hreflang alternates, dynamic `/sitemap.xml`, and dynamic `/robots.txt`.
+
+### Public Blog
+
+The public blog is server-first and crawlable. Livewire page components organize page data, while Blade renders real links and semantic markup:
+
+- `App\Livewire\Public\PostIndex`
+- `App\Livewire\Public\PostShow`
+- `App\Livewire\Public\CategoryShow`
+- `App\Livewire\Public\TagShow`
+
+Published visibility is handled by model scopes: a public post must be published, not soft-deleted, not scheduled for the future, and have a translation for the active locale.
 
 ### Taxonomy
 
@@ -62,10 +73,8 @@ The project starts with the Laravel Livewire starter kit. Fortify, passkeys, two
 
 ## Near-Term Modules
 
-- `App\Livewire\Public\PostIndex`
-- `App\Livewire\Public\PostShow`
-- `App\Livewire\Public\Search`
 - `App\Livewire\Admin\Posts`
+- `App\Livewire\Public\Search`
 - `App\Support\Seo`
 - `App\Support\Theming`
 - `App\Support\Localization`

@@ -2,7 +2,7 @@
 
 An open-source Laravel and Livewire blog platform foundation for teams that want a clean, SEO-aware, multilingual, theme-ready publishing system.
 
-> Status: early foundation. The repository already includes the Laravel 13 + Livewire 4 application shell, authentication starter kit, content-domain migrations, SEO metadata models, theme/palette models, CI, tests, and open-source project files. The public editor and admin publishing workflows are the next major milestones.
+> Status: public blog foundation. The repository includes the Laravel 13 + Livewire 4 application shell, authentication starter kit, content-domain migrations, locale-aware public blog routes, centralized Google-focused SEO rendering, dynamic sitemap/robots responses, theme/palette models, CI, tests, and open-source project files. Admin publishing workflows are the next major milestone.
 
 [![Tests](https://github.com/Rohatcengizhanbucak/laravel-livewire-blogkit/actions/workflows/tests.yml/badge.svg)](https://github.com/Rohatcengizhanbucak/laravel-livewire-blogkit/actions/workflows/tests.yml)
 [![Lint](https://github.com/Rohatcengizhanbucak/laravel-livewire-blogkit/actions/workflows/lint.yml/badge.svg)](https://github.com/Rohatcengizhanbucak/laravel-livewire-blogkit/actions/workflows/lint.yml)
@@ -22,6 +22,7 @@ Most blog starters are either too small to grow or too opinionated to customize.
 
 - **Content is translatable**: posts and pages store language-specific title, slug, excerpt, and body records.
 - **SEO is first-class**: meta titles, descriptions, canonical URLs, robots flags, Open Graph fields, and schema payloads are modeled explicitly.
+- **Public output is crawlable**: index, taxonomy, and detail pages render server-first Blade with real links, canonical URLs, hreflang alternates, JSON-LD, and XML sitemap coverage.
 - **Themes are data-aware**: themes and color palettes are stored as records so public presentation can become dynamic.
 - **Auth is already present**: the app starts from the official Laravel Livewire starter kit with Fortify, passkeys, two-factor authentication, and account settings.
 - **The codebase should stay readable**: the first version favors clear Laravel conventions over clever abstractions.
@@ -41,7 +42,7 @@ Most blog starters are either too small to grow or too opinionated to customize.
 
 - PHP 8.3 or newer
 - Composer 2
-- Node.js LTS with npm
+- Node.js LTS with npm or pnpm
 - SQLite for the default local database
 
 Windows users can use XAMPP PHP. The included `start.bat` looks for `C:\xampp\php\php.exe` first, then falls back to `php` from PATH.
@@ -83,6 +84,8 @@ For Windows with the Vite dev server:
 start.bat dev
 ```
 
+If npm is not available locally, `start.bat` will use `pnpm` when it exists. The repository includes `pnpm-lock.yaml`, so `pnpm install && pnpm run build` is also supported for local Windows development.
+
 ## Development
 
 Run the Laravel app:
@@ -95,6 +98,12 @@ Run Vite:
 
 ```bash
 npm run dev
+```
+
+or:
+
+```bash
+pnpm run dev
 ```
 
 Run the full backend quality suite:
@@ -138,13 +147,25 @@ The current foundation includes these content tables and models:
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the longer design map.
 
+## Public SEO Surface
+
+Current public routes:
+
+- `/` redirects to the default active locale blog index
+- `/{locale}/blog`
+- `/{locale}/blog/{slug}`
+- `/{locale}/categories/{slug}`
+- `/{locale}/tags/{slug}`
+- `/sitemap.xml`
+- `/robots.txt`
+
+The public layer only exposes published, non-deleted, non-scheduled posts with an active locale translation. SEO head output is centralized through `App\Support\Seo`, including title, description, canonical, robots, Open Graph, JSON-LD, hreflang, `x-default`, sitemap filtering, and dynamic robots.txt.
+
 ## Planned Features
 
-- Public blog index, category pages, tag pages, and post detail pages
 - Admin publishing workflow for drafts, scheduled posts, and featured content
 - Dynamic theme switching and user-selectable color palettes
-- Multilingual route generation and `hreflang` output
-- XML sitemap, RSS feed, canonical URLs, and structured data rendering
+- RSS/Atom feed support
 - Media library with image optimization
 - Plugin-friendly extension points for themes and SEO integrations
 - Import/export tools for open-source portability

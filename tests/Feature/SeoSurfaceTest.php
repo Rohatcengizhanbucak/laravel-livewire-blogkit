@@ -55,7 +55,7 @@ class SeoSurfaceTest extends TestCase
         $theme->palettes()->create([
             'key' => 'classic',
             'name' => 'Classic',
-            'colors' => ['primary' => '#475569', 'accent' => '#16a34a', 'text' => '#0f172a'],
+            'colors' => ['primary' => '#525252', 'accent' => '#16a34a', 'text' => '#0f172a'],
             'is_default' => true,
         ]);
 

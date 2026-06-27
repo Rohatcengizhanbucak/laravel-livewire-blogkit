@@ -57,7 +57,7 @@ class PublicBlogTest extends TestCase
             'colors' => [
                 'background' => '#f8fafc',
                 'surface' => '#ffffff',
-                'primary' => '#475569',
+                'primary' => '#525252',
                 'accent' => '#16a34a',
                 'text' => '#0f172a',
             ],

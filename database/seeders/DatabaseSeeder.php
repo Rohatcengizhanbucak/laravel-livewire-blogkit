@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
                 'colors' => [
                     'background' => '#111827',
                     'surface' => '#ffffff',
-                    'primary' => '#475569',
+                    'primary' => '#525252',
                     'accent' => '#16a34a',
                     'text' => '#111827',
                 ],
@@ -82,7 +82,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Engineering',
                 'description' => 'Technical notes, architecture decisions, and build logs.',
-                'color' => '#475569',
+                'color' => '#525252',
             ],
         );
 

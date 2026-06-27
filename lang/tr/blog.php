@@ -39,7 +39,10 @@ return [
         'eyebrow' => 'Arama',
         'heading' => 'Blogda ara',
         'heading_with_query' => '":query" için arama sonuçları',
+        'result_sections' => 'Arama sonuç bölümleri',
+        'results_for' => 'Sonuçlar:',
         'short_query' => 'Açık yazılarda arama yapmak için en az 2 karakter girin.',
+        'stories' => 'Yazılar',
     ],
     'seo' => [
         'index' => [

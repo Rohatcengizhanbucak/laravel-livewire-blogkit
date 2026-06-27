@@ -35,7 +35,7 @@ class ContentArchitectureTest extends TestCase
         $palette = $theme->palettes()->create([
             'key' => 'classic',
             'name' => 'Classic',
-            'colors' => ['primary' => '#2563eb'],
+            'colors' => ['primary' => '#475569'],
             'is_default' => true,
         ]);
 

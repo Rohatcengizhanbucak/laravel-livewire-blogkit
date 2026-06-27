@@ -57,7 +57,7 @@ class PublicBlogTest extends TestCase
             'colors' => [
                 'background' => '#f8fafc',
                 'surface' => '#ffffff',
-                'primary' => '#2563eb',
+                'primary' => '#475569',
                 'accent' => '#16a34a',
                 'text' => '#0f172a',
             ],
@@ -178,12 +178,26 @@ class PublicBlogTest extends TestCase
 
         $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle']))
             ->assertOk()
+            ->assertSee('Results for')
+            ->assertSee('Stories')
             ->assertSee('Needle Public Article')
             ->assertDontSee('Needle Draft Secret')
             ->assertDontSee('Needle Future Article')
             ->assertDontSee('Needle Turkish Article')
             ->assertDontSee('Needle Deleted Article')
             ->assertDontSee('Other Public Article');
+    }
+
+    public function test_public_search_surface_uses_neutral_accents(): void
+    {
+        $this->createPost('Neutral Public Article', 'neutral-public-article');
+
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'neutral']))
+            ->assertOk()
+            ->assertDontSee('text-blue', false)
+            ->assertDontSee('border-blue', false)
+            ->assertDontSee('bg-blue', false)
+            ->assertDontSee('#2563eb', false);
     }
 
     public function test_search_short_query_does_not_list_results(): void

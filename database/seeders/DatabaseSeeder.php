@@ -54,14 +54,14 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        $theme->palettes()->firstOrCreate(
+        $theme->palettes()->updateOrCreate(
             ['key' => 'midnight'],
             [
                 'name' => 'Midnight',
                 'colors' => [
                     'background' => '#111827',
                     'surface' => '#ffffff',
-                    'primary' => '#2563eb',
+                    'primary' => '#475569',
                     'accent' => '#16a34a',
                     'text' => '#111827',
                 ],
@@ -77,12 +77,12 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
-        $category = Category::query()->firstOrCreate(
+        $category = Category::query()->updateOrCreate(
             ['slug' => 'engineering'],
             [
                 'name' => 'Engineering',
                 'description' => 'Technical notes, architecture decisions, and build logs.',
-                'color' => '#2563eb',
+                'color' => '#475569',
             ],
         );
 

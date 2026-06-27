@@ -39,7 +39,10 @@ return [
         'eyebrow' => 'Search',
         'heading' => 'Search the blog',
         'heading_with_query' => 'Search results for ":query"',
+        'result_sections' => 'Search result sections',
+        'results_for' => 'Results for',
         'short_query' => 'Enter at least 2 characters to search public articles.',
+        'stories' => 'Stories',
     ],
     'seo' => [
         'index' => [

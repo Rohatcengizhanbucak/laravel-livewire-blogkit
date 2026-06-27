@@ -1,29 +1,76 @@
-<div>
-    <section class="min-h-[25.25rem] bg-white">
-        <div class="mx-auto max-w-6xl px-5 py-14">
-            <p class="text-sm font-semibold uppercase tracking-wide text-blue-700">{{ trans('blog.search.eyebrow', [], $currentLocale->code) }}</p>
-            <h1 class="mt-3 max-w-3xl text-4xl font-bold tracking-normal text-slate-950 md:text-5xl">
-                {{ filled($query) ? trans('blog.search.heading_with_query', ['query' => $query], $currentLocale->code) : trans('blog.search.heading', [], $currentLocale->code) }}
-            </h1>
-            <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-                {{ trans('blog.search.description', [], $currentLocale->code) }}
-            </p>
-        </div>
+<div class="bg-white">
+    <section class="mx-auto max-w-4xl px-5 py-14 md:py-16">
+        <h1 class="text-4xl font-bold tracking-normal text-slate-500 md:text-5xl">
+            @if (filled($query))
+                {{ trans('blog.search.results_for', [], $currentLocale->code) }}
+                <span class="text-slate-950">{{ $query }}</span>
+            @else
+                <span class="text-slate-950">{{ trans('blog.search.heading', [], $currentLocale->code) }}</span>
+            @endif
+        </h1>
+
+        <nav class="mt-10 flex gap-8 border-b border-slate-200 text-sm font-medium text-slate-500" aria-label="{{ trans('blog.search.result_sections', [], $currentLocale->code) }}">
+            <span class="-mb-px border-b border-slate-950 pb-4 text-slate-950">
+                {{ trans('blog.search.stories', [], $currentLocale->code) }}
+            </span>
+        </nav>
     </section>
 
-    <section class="mx-auto max-w-6xl px-5 py-10">
+    <section class="mx-auto max-w-4xl px-5 pb-16">
         @if (mb_strlen($query) < 2)
-            <div class="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-slate-600">
+            <div class="border-b border-slate-200 py-8 text-slate-600">
                 {{ trans('blog.search.short_query', [], $currentLocale->code) }}
             </div>
         @elseif ($posts->isEmpty())
-            <div class="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-slate-600">
+            <div class="border-b border-slate-200 py-8 text-slate-600">
                 {{ trans('blog.search.empty', ['query' => $query], $currentLocale->code) }}
             </div>
         @else
-            <div class="grid gap-6">
+            <div class="divide-y divide-slate-200 border-b border-slate-200">
                 @foreach ($posts as $post)
-                    @include('themes.default.partials.post-card', ['post' => $post, 'currentLocale' => $currentLocale])
+                    @php
+                        $translation = $post->translations->first();
+                    @endphp
+
+                    @if ($translation)
+                        <article class="py-8">
+                            <div class="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                                @if ($post->category)
+                                    <a href="{{ route('blog.categories.show', ['locale' => $currentLocale->code, 'slug' => $post->category->slug]) }}" class="font-medium text-slate-700 hover:text-slate-950">
+                                        {{ $post->category->name }}
+                                    </a>
+                                    <span aria-hidden="true">&middot;</span>
+                                @endif
+
+                                @if ($post->published_at)
+                                    <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->locale($currentLocale->code)->isoFormat(trans('blog.date_format', [], $currentLocale->code)) }}</time>
+                                    <span aria-hidden="true">&middot;</span>
+                                @endif
+
+                                <span>{{ trans_choice('blog.reading_time', $post->reading_time, ['minutes' => $post->reading_time], $currentLocale->code) }}</span>
+                            </div>
+
+                            <h2 class="max-w-3xl text-2xl font-bold tracking-normal text-slate-950">
+                                <a href="{{ route('blog.show', ['locale' => $currentLocale->code, 'slug' => $translation->slug]) }}" class="hover:text-slate-700">
+                                    {{ $translation->title }}
+                                </a>
+                            </h2>
+
+                            @if (filled($translation->excerpt))
+                                <p class="mt-3 max-w-3xl text-base leading-7 text-slate-600">{{ $translation->excerpt }}</p>
+                            @endif
+
+                            @if ($post->tags->isNotEmpty())
+                                <nav class="mt-5 flex flex-wrap gap-2" aria-label="{{ trans('blog.aria.post_tags', [], $currentLocale->code) }}">
+                                    @foreach ($post->tags as $tag)
+                                        <a href="{{ route('blog.tags.show', ['locale' => $currentLocale->code, 'slug' => $tag->slug]) }}" class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200 hover:text-slate-950">
+                                            #{{ $tag->name }}
+                                        </a>
+                                    @endforeach
+                                </nav>
+                            @endif
+                        </article>
+                    @endif
                 @endforeach
             </div>
 

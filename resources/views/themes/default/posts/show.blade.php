@@ -46,7 +46,7 @@
         @if ($post->tags->isNotEmpty())
             <nav class="mt-10 flex flex-wrap gap-2" aria-label="{{ trans('blog.aria.post_tags', [], $currentLocale->code) }}">
                 @foreach ($post->tags as $tag)
-                    <a href="{{ route('blog.tags.show', ['locale' => $currentLocale->code, 'slug' => $tag->slug]) }}" class="rounded-full border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 hover:border-blue-300 hover:text-blue-700">
+                    <a href="{{ route('blog.tags.show', ['locale' => $currentLocale->code, 'slug' => $tag->slug]) }}" class="rounded-full border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 hover:border-slate-400 hover:text-slate-950">
                         #{{ $tag->name }}
                     </a>
                 @endforeach

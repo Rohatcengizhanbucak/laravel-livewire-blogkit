@@ -110,6 +110,30 @@ class SeoManager
         );
     }
 
+    public function search(Locale $locale, string $query = ''): SeoData
+    {
+        $title = trans('blog.seo.search.title', [], $locale->code);
+        $description = trans('blog.seo.search.description', ['app' => config('app.name', 'BlogKit')], $locale->code);
+        $canonical = route('blog.search', ['locale' => $locale->code]);
+
+        if (filled($query)) {
+            $canonical .= '?q='.rawurlencode($query);
+        }
+
+        return new SeoData(
+            title: $this->title($title),
+            description: $description,
+            canonicalUrl: $canonical,
+            robots: 'noindex,follow',
+            ogTitle: $this->title($title),
+            ogDescription: $description,
+            ogImage: null,
+            alternates: $this->searchAlternates($query),
+            xDefaultUrl: $this->defaultSearchUrl($query),
+            structuredData: null,
+        );
+    }
+
     public function noindex(string $title): SeoData
     {
         return new SeoData(
@@ -209,6 +233,26 @@ class SeoManager
     private function defaultRoute(string $route, array $params = []): string
     {
         return route($route, ['locale' => $this->locales->default()->code, ...$params]);
+    }
+
+    /** @return array<int, array{locale: string, url: string}> */
+    private function searchAlternates(string $query): array
+    {
+        return $this->locales->active()
+            ->map(fn (Locale $locale): array => [
+                'locale' => $locale->code,
+                'url' => route('blog.search', ['locale' => $locale->code])
+                    .(filled($query) ? '?q='.rawurlencode($query) : ''),
+            ])
+            ->values()
+            ->all();
+    }
+
+    private function defaultSearchUrl(string $query): string
+    {
+        $url = route('blog.search', ['locale' => $this->locales->default()->code]);
+
+        return filled($query) ? $url.'?q='.rawurlencode($query) : $url;
     }
 
     /** @return array<int, array{locale: string, url: string}> */

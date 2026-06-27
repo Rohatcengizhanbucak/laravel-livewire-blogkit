@@ -21,17 +21,34 @@ return [
     'nav' => [
         'blog' => 'Blog',
         'dashboard' => 'Panel',
+        'language_switcher' => 'Dil seçici',
         'login' => 'Giriş',
+        'search' => 'Ara',
+        'search_placeholder' => 'Ara',
+        'sign_in' => 'Giriş yap',
+        'sign_up' => 'Kaydol',
         'sitemap' => 'Site Haritası',
         'skip_to_content' => 'İçeriğe geç',
         'translation_unavailable' => 'Çeviri yok',
     ],
     'reading_time' => '{1} :minutes dk okuma|[2,*] :minutes dk okuma',
     'related_posts' => 'İlgili yazılar',
+    'search' => [
+        'description' => 'Seçili dilde başlık, özet veya içerik metnine göre açık yazıları bulun.',
+        'empty' => '":query" ile eşleşen açık yazı bulunamadı.',
+        'eyebrow' => 'Arama',
+        'heading' => 'Blogda ara',
+        'heading_with_query' => '":query" için arama sonuçları',
+        'short_query' => 'Açık yazılarda arama yapmak için en az 2 karakter girin.',
+    ],
     'seo' => [
         'index' => [
             'description' => ':app için editör notları, teknik yazılar ve ürün güncellemeleri.',
             'title' => 'Blog',
+        ],
+        'search' => [
+            'description' => ':app üzerinde yayınlanan açık yazılarda arama yapın.',
+            'title' => 'Arama',
         ],
         'taxonomy' => [
             'category' => 'Kategori',

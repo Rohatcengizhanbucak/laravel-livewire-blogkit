@@ -3,6 +3,7 @@
 use App\Livewire\Public\CategoryShow;
 use App\Livewire\Public\PostIndex;
 use App\Livewire\Public\PostShow;
+use App\Livewire\Public\SearchIndex;
 use App\Livewire\Public\TagShow;
 use App\Support\Localization\LocaleResolver;
 use App\Support\Seo\RobotsTxt;
@@ -25,6 +26,7 @@ Route::prefix('{locale}')
     ->where(['locale' => '[A-Za-z]{2,12}'])
     ->group(function (): void {
         Route::get('blog', PostIndex::class)->name('blog.index');
+        Route::get('search', SearchIndex::class)->name('blog.search');
         Route::get('blog/{slug}', PostShow::class)->name('blog.show');
         Route::get('categories/{slug}', CategoryShow::class)->name('blog.categories.show');
         Route::get('tags/{slug}', TagShow::class)->name('blog.tags.show');

@@ -110,6 +110,16 @@ class PublicBlogTest extends TestCase
             ->assertDontSee('rel="preload" as="font"', false);
     }
 
+    public function test_public_navbar_search_form_targets_the_current_locale(): void
+    {
+        $this->get(route('blog.index', ['locale' => 'tr']))
+            ->assertOk()
+            ->assertSee('role="search"', false)
+            ->assertSee('action="'.route('blog.search', ['locale' => 'tr']).'"', false)
+            ->assertSee('name="q"', false)
+            ->assertSee(trans('blog.nav.search_placeholder', [], 'tr'));
+    }
+
     public function test_blog_index_translates_public_ui_for_the_current_locale(): void
     {
         $this->createPost('Turkce Yayin', 'turkce-yayin', locale: $this->tr);
@@ -153,6 +163,54 @@ class PublicBlogTest extends TestCase
             ->assertOk()
             ->assertSee('aria-disabled="true"', false)
             ->assertDontSee('href="'.route('blog.index', ['locale' => 'en']).'"', false);
+    }
+
+    public function test_search_lists_only_public_posts_for_the_current_locale(): void
+    {
+        $this->createPost('Needle Public Article', 'needle-public-article');
+        $this->createPost('Needle Draft Secret', 'needle-draft-secret', postAttributes: ['status' => 'draft']);
+        $this->createPost('Needle Future Article', 'needle-future-article', postAttributes: ['published_at' => now()->addDay()]);
+        $this->createPost('Needle Turkish Article', 'needle-turkish-article', locale: $this->tr);
+        $this->createPost('Other Public Article', 'other-public-article');
+
+        $deleted = $this->createPost('Needle Deleted Article', 'needle-deleted-article');
+        $deleted->delete();
+
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle']))
+            ->assertOk()
+            ->assertSee('Needle Public Article')
+            ->assertDontSee('Needle Draft Secret')
+            ->assertDontSee('Needle Future Article')
+            ->assertDontSee('Needle Turkish Article')
+            ->assertDontSee('Needle Deleted Article')
+            ->assertDontSee('Other Public Article');
+    }
+
+    public function test_search_short_query_does_not_list_results(): void
+    {
+        $this->createPost('A Matching Public Article', 'a-matching-public-article');
+
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'a']))
+            ->assertOk()
+            ->assertSee(trans('blog.search.short_query', [], 'en'))
+            ->assertDontSee('A Matching Public Article');
+    }
+
+    public function test_search_language_switcher_preserves_the_query(): void
+    {
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle']))
+            ->assertOk()
+            ->assertSee('href="'.route('blog.search', ['locale' => 'tr', 'q' => 'needle']).'"', false);
+    }
+
+    public function test_search_renders_noindex_seo_head_without_json_ld(): void
+    {
+        $this->createPost('Needle Public Article', 'needle-public-article');
+
+        $this->get(route('blog.search', ['locale' => 'en', 'q' => 'needle']))
+            ->assertOk()
+            ->assertSee('<meta name="robots" content="noindex,follow" />', false)
+            ->assertDontSee('<script type="application/ld+json">', false);
     }
 
     public function test_locale_slug_resolution_requires_an_active_locale_and_matching_translation(): void

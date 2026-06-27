@@ -38,22 +38,26 @@
 
 @layer base {
     :root {
-        --scrollbar-track: #f8fafc;
-        --scrollbar-thumb: #cbd5e1;
-        --scrollbar-thumb-hover: #64748b;
+        --scrollbar-track: transparent;
+        --scrollbar-thumb: rgba(100, 116, 139, 0.24);
+        --scrollbar-thumb-hover: rgba(100, 116, 139, 0.42);
     }
 
     .dark {
-        --scrollbar-track: #18181b;
-        --scrollbar-thumb: #52525b;
-        --scrollbar-thumb-hover: #a1a1aa;
+        --scrollbar-thumb: rgba(161, 161, 170, 0.28);
+        --scrollbar-thumb-hover: rgba(161, 161, 170, 0.48);
     }
 
     html {
+        color-scheme: light;
         overflow-y: auto;
         scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
         scrollbar-gutter: stable;
         scrollbar-width: thin;
+    }
+
+    html.dark {
+        color-scheme: dark;
     }
 
     @supports not (scrollbar-gutter: stable) {
@@ -63,19 +67,19 @@
     }
 
     ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
+        width: 8px;
+        height: 8px;
     }
 
     ::-webkit-scrollbar-track {
-        background: var(--scrollbar-track);
+        background-color: var(--scrollbar-track);
     }
 
     ::-webkit-scrollbar-thumb {
         min-height: 48px;
         background-color: var(--scrollbar-thumb);
         background-clip: padding-box;
-        border: 3px solid transparent;
+        border: 2px solid transparent;
         border-radius: 999px;
     }
 

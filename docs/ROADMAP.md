@@ -9,14 +9,18 @@
 - CI for tests and linting
 - Open-source repository health files
 
-## 0.2 Public Blog
+## 0.2 Public Blog + Google SEO
 
 - Public post index
 - Post detail pages
 - Category and tag pages
 - Published/draft/scheduled visibility rules
-- SEO meta rendering
+- Locale-aware route resolution
+- SEO meta rendering with title, description, robots, Open Graph, and JSON-LD
 - Canonical URL support
+- `hreflang` and `x-default` alternates
+- Dynamic `/sitemap.xml`
+- Dynamic `/robots.txt`
 
 ## 0.3 Admin Publishing
 
@@ -37,12 +41,10 @@
 
 ## 0.5 Advanced SEO
 
-- XML sitemap
 - RSS/Atom feeds
-- `hreflang`
-- Structured data components
 - Redirect manager
 - Social preview image workflow
+- Search Console oriented reporting hooks
 
 ## 1.0 Stable Release
 
